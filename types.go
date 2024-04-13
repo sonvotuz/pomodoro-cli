@@ -19,7 +19,6 @@ type model struct {
 	inSession     bool
 	sessionType   string // "Work" or "Break"
 	keys          keyMap
-	quitting      bool
 	interrupting  bool
 }
 

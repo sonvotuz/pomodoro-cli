@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"strings"
 	"time"
 
-	"github.com/charmbracelet/bubbles/progress"
+	"github.com/charmbracelet/bubbles/key"
+	"github.com/charmbracelet/bubbles/timer"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -36,9 +36,51 @@ var keys = keyMap{
 	),
 }
 
+func initialModel() model {
+	return model{keys: keys, timerDuration: 25 * time.Minute}
+}
+
 func (m model) Init() tea.Cmd {
 	return m.timer.Init()
 }
+
+func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch {
+		case key.Matches(msg, m.keys.Quit):
+			return m, tea.Quit
+			// case key.Matches(msg, m.keymap.reset):
+			// 	m.timer.Timeout = timeout
+			// case key.Matches(msg, m.keymap.start, m.keymap.stop):
+			// 	return m, m.timer.Toggle()
+		}
+		return m, tea.Quit
+
+	case tea.WindowSizeMsg:
+		m.progress.Width = msg.Width - padding*2 - 4
+		if m.progress.Width > maxWidth {
+			m.progress.Width = maxWidth
+		}
+		return m, nil
+
+	case timer.TickMsg:
+		var cmds []tea.Cmd
+		var cmd tea.Cmd
+
+		m.remainingTime += m.timer.Interval
+		pct := m.remainingTime.Milliseconds() * 100 / m.timerDuration.Milliseconds()
+		cmds = append(cmds, m.progress.SetPercent(float64(pct)/100))
+
+		m.timer, cmd = m.timer.Update(msg)
+		cmds = append(cmds, cmd)
+		return m, tea.Batch(cmds...)
+
+	default:
+		return m, nil
+	}
+}
+
 func (m model) View() string {
 	if !m.inSession {
 		return showHelper()
