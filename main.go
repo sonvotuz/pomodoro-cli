@@ -1,6 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+
+	tea "github.com/charmbracelet/bubbletea"
+)
 
 func main() {
 	program := tea.NewProgram(initialModel(), tea.WithAltScreen())
@@ -9,5 +14,4 @@ func main() {
 		fmt.Println("Oh no!", err)
 		os.Exit(1)
 	}
-}
 }
