@@ -18,7 +18,23 @@ const (
 
 var helpStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#626262")).Render
 
-type tickMsg time.Time
+var keys = keyMap{
+	Start: key.NewBinding(
+		key.WithKeys("s"),
+	),
+	Break: key.NewBinding(
+		key.WithKeys("b"),
+	),
+	List: key.NewBinding(
+		key.WithKeys("l"),
+	),
+	Stop: key.NewBinding(
+		key.WithKeys("x"),
+	),
+	Quit: key.NewBinding(
+		key.WithKeys("q", "esc", "ctrl+c"),
+	),
+}
 
 func (m model) Init() tea.Cmd {
 	return m.timer.Init()
