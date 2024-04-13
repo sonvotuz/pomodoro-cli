@@ -19,10 +19,8 @@ type model struct {
 	inSession     bool
 	sessionType   string // "Work" or "Break"
 	keys          keyMap
-}
-
-func initialModel() model {
-	return model{}
+	quitting      bool
+	interrupting  bool
 }
 
 type keyMap struct {
