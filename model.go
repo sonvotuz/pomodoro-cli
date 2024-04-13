@@ -3,6 +3,7 @@ package main
 import (
 	"time"
 
+	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/progress"
 	"github.com/charmbracelet/bubbles/timer"
 )
@@ -17,8 +18,17 @@ type model struct {
 	startTime     time.Time
 	inSession     bool
 	sessionType   string // "Work" or "Break"
+	keys          keyMap
 }
 
 func initialModel() model {
 	return model{}
+}
+
+type keyMap struct {
+	Start key.Binding
+	Break key.Binding
+	List  key.Binding
+	Stop  key.Binding
+	Quit  key.Binding
 }
