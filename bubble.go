@@ -56,7 +56,7 @@ func initialModel() model {
 }
 
 func (m model) Init() tea.Cmd {
-	return tickCmd()
+	return nil
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -235,7 +235,7 @@ func (m model) View() string {
 		)
 	}
 	if m.opening {
-		return fmt.Sprintf("Ready to start new %s session in %d seconds...", m.sessionType, int(m.remainingTime.Seconds()-m.timerDuration.Seconds()))
+		return fmt.Sprintf("Ready to start new %s session for %.0f minutes in %d seconds...", m.sessionType, m.timerDuration.Minutes(), int(m.remainingTime.Seconds()-m.timerDuration.Seconds()))
 	}
 
 	if m.closing {
