@@ -212,7 +212,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			if m.sessionType == workSession {
 				endSession := time.Now()
-				m.sessions = append(m.sessions, session{StartTime: m.startTime, EndTime: endSession, Duration: m.timerDuration})
+				m.sessions = append(m.sessions, session{StartTime: m.startTime,
+					EndTime: endSession, Duration: m.timerDuration})
 				err := saveSessions(m.sessions)
 				if err != nil {
 					m.err = err.Error()
@@ -238,7 +239,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m model) View() string {
 	if m.showSession {
-		return fmt.Sprintf("\n%v\n%v",
+		return fmt.Sprintf("\n%s\n%s",
 			printSessions(m.sessions, m.printDifferentDate, m.datePrint),
 			helpStyle(" - Press 'x' to stop\n"))
 	}
@@ -252,18 +253,27 @@ func (m model) View() string {
 		)
 	}
 	if m.opening {
-		return fmt.Sprintf("Ready to start new %s session for %.0f minutes in %d seconds...", m.sessionType, m.timerDuration.Minutes(), int(m.remainingTime.Seconds()-m.timerDuration.Seconds()))
+		return fmt.Sprintf("Ready to start new %s session for %.0f minutes in %d seconds...",
+			m.sessionType,
+			m.timerDuration.Minutes(),
+			int(m.remainingTime.Seconds()-m.timerDuration.Seconds()))
 	}
 
 	if m.closing {
 		if m.sessionType == workSession {
-			return fmt.Sprintf("You have completed one %s session. Keep it up 💪", m.sessionType)
+			return fmt.Sprintf("You have completed one %s session. Keep it up 💪",
+				m.sessionType)
 		}
-		return fmt.Sprintf("Regained your energy with short %s. Let's start %s session.", breakSession, workSession)
+		return fmt.Sprintf("Regained your energy with short %s. Let's start %s session.",
+			breakSession,
+			workSession)
 	}
-	pad := strings.Repeat(" ", padding)
 
-	return fmt.Sprintf("\n%s Timer: %s left\n\n", m.sessionType, m.remainingTime) + pad + m.progress.ViewAs(m.percent) + "\n\n\n" + helpStyle(" - Press 'x' to stop\n - Press 'q' to quit")
+	return fmt.Sprintf("\n%s Timer: %s left\n\n  %v\n\n\n%v\n",
+		m.sessionType,
+		m.remainingTime,
+		m.progress.ViewAs(m.percent),
+		helpStyle(" - Press 'x' to stop\n - Press 'q' to quit"))
 }
 
 func tickCmd() tea.Cmd {

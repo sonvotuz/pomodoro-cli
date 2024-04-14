@@ -22,11 +22,9 @@ type model struct {
 	showSession        bool
 	printDifferentDate bool
 	datePrint          time.Time
-
-	textarea textarea.Model
-	err      string
-
-	sessions []session
+	textarea           textarea.Model
+	err                string
+	sessions           []session
 }
 
 type keyMap struct {

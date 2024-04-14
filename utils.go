@@ -10,7 +10,21 @@ import (
 )
 
 func showHelper() string {
-	return "-------------------Usage-------------------\n\n - Press 's' to start work session.\n          s %m start work session for %m minutes\n - Press 'b' to take break.\n          b %m to take break for %m minutes\n - Press 'l' to list all completed today's sessions.\n          l YYYY-MM-DD to list completed sessions on that date.\n - Press 'q' to quit.\n"
+	helpText := `
+-------------------Usage-------------------
+
+ - Press 's' to start work session.
+          s <minutes> to start work session for <minutes> minutes
+
+ - Press 'b' to take a break.
+          b <minutes> to take break for <minutes> minutes
+
+ - Press 'l' to list all completed today's sessions.
+          l YYYY-MM-DD to list completed sessions on that date.
+
+ - Press 'q' to quit.
+`
+	return helpText
 }
 
 func checkValidMinute(m *model, command string) (int, bool) {
@@ -99,7 +113,12 @@ func printHelper(sessions []session) string {
 		return "\nYou haven't completed any session 😕\n"
 	}
 	for _, s := range sessions {
-		resultPrinting += fmt.Sprintf("Pomodoro session: duration of %f minutes from %v to %v\n", s.Duration.Minutes(), s.StartTime.Format("15:04"), s.EndTime.Format("15:04"))
+		resultPrinting += fmt.Sprintf(
+			"Pomodoro session: duration of %f minutes from %v to %v\n",
+			s.Duration.Minutes(),
+			s.StartTime.Format("15:04"),
+			s.EndTime.Format("15:04"),
+		)
 	}
 	return resultPrinting
 }
