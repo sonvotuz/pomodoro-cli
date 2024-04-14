@@ -38,7 +38,7 @@ func initialModel() model {
 	ta.Focus()
 
 	ta.Prompt = "┃ "
-	ta.CharLimit = 10
+	ta.CharLimit = 20
 
 	ta.SetWidth(30)
 	ta.SetHeight(2)
@@ -130,8 +130,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if !m.inSession {
 					m.startTime = time.Now()
 					m.sessionType = breakSession
-					// m.timerDuration = 5 * time.Minute
-					m.timerDuration = time.Duration(numOfMinutes) * time.Second
+					m.timerDuration = time.Duration(numOfMinutes) * time.Minute
 					m.remainingTime = m.timerDuration + 3*time.Second
 					m.percent = 0
 					m.inSession = true
@@ -187,7 +186,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			if m.sessionType == workSession {
 				endSession := time.Now()
-				m.sessions = append(m.sessions, session{StartTime: m.startTime, EndTime: endSession})
+				m.sessions = append(m.sessions, session{StartTime: m.startTime, EndTime: endSession, Duration: m.timerDuration})
 				err := saveSessions(m.sessions)
 				if err != nil {
 					m.err = err.Error()

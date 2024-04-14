@@ -9,16 +9,19 @@ import (
 )
 
 type model struct {
-	percent       float64
-	progress      progress.Model
-	timerDuration time.Duration
-	remainingTime time.Duration
-	startTime     time.Time
-	inSession     bool
-	sessionType   string // "Work" or "Break"
-	keys          keyMap
-	opening       bool
-	closing       bool
+	percent            float64
+	progress           progress.Model
+	timerDuration      time.Duration
+	remainingTime      time.Duration
+	startTime          time.Time
+	inSession          bool
+	sessionType        string // "Work" or "Break"
+	keys               keyMap
+	opening            bool
+	closing            bool
+	showSession        bool
+	printDifferentDate bool
+	datePrint          time.Time
 
 	textarea textarea.Model
 	err      string
