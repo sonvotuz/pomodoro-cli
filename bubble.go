@@ -80,6 +80,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 
+		m.err = ""
 		switch msg.Type {
 		case tea.KeyCtrlC, tea.KeyEsc:
 			return m, tea.Quit
@@ -188,9 +189,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m model) View() string {
 	if !m.inSession {
 		return fmt.Sprintf(
-			"\n%s\n%s\n\n",
+			"\n%s\n%s\n\n%s\n\n",
 			showHelper(),
 			m.textarea.View(),
+			m.err,
 		)
 	}
 	if m.opening {
