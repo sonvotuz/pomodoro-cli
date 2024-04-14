@@ -50,7 +50,7 @@ func initialModel() model {
 
 	ta.KeyMap.InsertNewline.SetEnabled(false)
 
-	return model{keys: keys, timerDuration: 25 * time.Minute,
+	return model{sessions: loadSessions(), keys: keys,
 		progress: progress.New(progress.WithDefaultGradient()), textarea: ta,
 	}
 }
@@ -93,25 +93,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			switch {
 			case command == "q":
 				return m, tea.Quit
-			case command == "s":
-				if !m.inSession {
-					m.startTime = time.Now()
-					m.sessionType = workSession
-					// m.timerDuration = 25 * time.Minute
-					m.timerDuration = 10 * time.Second
-					m.remainingTime = m.timerDuration + 3*time.Second
-					m.percent = 0
-					m.inSession = true
-					m.opening = true
-					m.closing = false
-					return m, tickCmd()
-				} else {
-					return m, nil
-				}
 			case strings.HasPrefix(command, "s"):
 				numOfMinutes, ok := checkValidMinute(&m, command)
 				if !ok {
 					return m, nil
+				}
+
+				if numOfMinutes == 0 {
+					numOfMinutes = 25
 				}
 
 				if !m.inSession {
@@ -128,27 +117,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				} else {
 					return m, nil
 				}
-			case command == "b":
-
-				if !m.inSession {
-					m.startTime = time.Now()
-					m.sessionType = breakSession
-					// m.timerDuration = 5 * time.Minute
-					m.timerDuration = 5 * time.Second
-					m.remainingTime = m.timerDuration + 3*time.Second
-					m.percent = 0
-					m.inSession = true
-					m.opening = true
-					m.closing = false
-					return m, tickCmd()
-				} else {
-					return m, nil
-				}
-
 			case strings.HasPrefix(command, "b"):
 				numOfMinutes, ok := checkValidMinute(&m, command)
 				if !ok {
 					return m, nil
+				}
+
+				if numOfMinutes == 0 {
+					numOfMinutes = 5
 				}
 
 				if !m.inSession {

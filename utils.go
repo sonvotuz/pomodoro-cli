@@ -13,6 +13,10 @@ func showHelper() string {
 }
 
 func checkValidMinute(m *model, command string) (int, bool) {
+	if command == "s" || command == "b" {
+		return 0, true
+	}
+
 	spacing := command[1:]
 	if !strings.HasPrefix(spacing, " ") {
 		m.err = "Invalid command"
