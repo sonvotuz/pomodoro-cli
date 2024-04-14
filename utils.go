@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func showHelper() string {
@@ -60,4 +61,36 @@ func saveSessions(sessions []session) error {
 	}
 
 	return nil
+}
+
+func printSessions(sessions []session, differentDate bool, date time.Time) {
+	if !differentDate {
+		today := time.Now()
+		todaySessions := getCorrectSession(sessions, today)
+
+		fmt.Println("Today's Completed Sessions:")
+		printHelper(todaySessions)
+	} else {
+		differentDateSessions := getCorrectSession(sessions, date)
+
+		fmt.Printf("Completed sessions on %v:\n", date.Format(time.DateOnly))
+		printHelper(differentDateSessions)
+	}
+}
+
+func getCorrectSession(sessions []session, date time.Time) []session {
+	resultSessions := []session{}
+	for _, s := range sessions {
+		if s.StartTime.Add(s.Duration).Format(time.DateOnly) == date.Format(time.DateOnly) {
+			resultSessions = append(resultSessions, s)
+		}
+	}
+
+	return resultSessions
+}
+
+func printHelper(sessions []session) {
+	for _, s := range sessions {
+		fmt.Printf("Pomodoro session: duration of %f minutes from %v to %v\n", s.Duration.Minutes(), s.StartTime.Format("15:04"), s.EndTime.Format("15:04"))
+	}
 }
