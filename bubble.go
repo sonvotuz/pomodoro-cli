@@ -7,6 +7,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/progress"
+	"github.com/charmbracelet/bubbles/textarea"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -23,15 +24,6 @@ type tickMsg time.Time
 var helpStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#626262")).Render
 
 var keys = keyMap{
-	Start: key.NewBinding(
-		key.WithKeys("s"),
-	),
-	Break: key.NewBinding(
-		key.WithKeys("b"),
-	),
-	List: key.NewBinding(
-		key.WithKeys("l"),
-	),
 	Stop: key.NewBinding(
 		key.WithKeys("x"),
 	),
@@ -41,8 +33,26 @@ var keys = keyMap{
 }
 
 func initialModel() model {
+	ta := textarea.New()
+	ta.Placeholder = "Command..."
+	ta.Focus()
+
+	ta.Prompt = "┃ "
+	ta.CharLimit = 10
+
+	ta.SetWidth(30)
+	ta.SetHeight(2)
+
+	// Remove cursor line styling
+	ta.FocusedStyle.CursorLine = lipgloss.NewStyle()
+
+	ta.ShowLineNumbers = false
+
+	ta.KeyMap.InsertNewline.SetEnabled(false)
+
 	return model{keys: keys, timerDuration: 25 * time.Minute,
-		progress: progress.New(progress.WithDefaultGradient())}
+		progress: progress.New(progress.WithDefaultGradient()), textarea: ta,
+	}
 }
 
 func (m model) Init() tea.Cmd {
