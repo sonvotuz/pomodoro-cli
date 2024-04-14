@@ -1,6 +1,9 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -24,4 +27,17 @@ func checkValidMinute(m *model, command string) (int, bool) {
 		return 0, false
 	}
 	return numOfMinutes, true
+}
+func saveSessions(sessions []session) error {
+	data, err := json.MarshalIndent(sessions, "", "  ")
+	if err != nil {
+		return fmt.Errorf("Error marshal data: %v", err.Error())
+	}
+
+	err = os.WriteFile("db.json", data, 0644)
+	if err != nil {
+		return fmt.Errorf("Error writing to file: %v", err.Error())
+	}
+
+	return nil
 }

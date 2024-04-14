@@ -210,7 +210,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.inSession = false
 			endSession := time.Now()
 			m.sessions = append(m.sessions, session{StartTime: m.startTime, EndTime: endSession, Type: m.sessionType})
-			saveSessions(m.sessions)
+			err := saveSessions(m.sessions)
+			if err != nil {
+				m.err = err.Error()
+			}
 
 			return m, nil
 		}
