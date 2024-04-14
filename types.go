@@ -22,12 +22,17 @@ type model struct {
 
 	textarea textarea.Model
 	err      string
+
+	sessions []session
 }
 
 type keyMap struct {
-	Start key.Binding
-	Break key.Binding
-	List  key.Binding
-	Stop  key.Binding
-	Quit  key.Binding
+	Stop key.Binding
+	Quit key.Binding
+}
+
+type session struct {
+	StartTime time.Time `json:"start_time"`
+	EndTime   time.Time `json:"end_time"`
+	Type      string    `json:"type"`
 }
