@@ -106,18 +106,34 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case tickMsg:
-		fmt.Println("tick tick", m.remainingTime)
-		fmt.Println("duration", m.timerDuration)
+		if !m.inSession {
+			return m, nil
+		}
+
 		m.remainingTime -= 1 * time.Second
 
-		m.percent = 1 - float64(m.remainingTime.Milliseconds()-m.timerDuration.Milliseconds())/float64(m.timerDuration.Milliseconds())
-		fmt.Println("percent", m.percent)
+		if m.opening {
+			if m.remainingTime.Milliseconds() <= m.timerDuration.Milliseconds() {
+				m.opening = false
+			}
+
+			return m, tickCmd()
+		}
+
+		if m.remainingTime.Seconds() <= -4 {
+			m.closing = false
+			m.inSession = false
+			return m, nil
+		}
+
+		if m.remainingTime.Seconds() <= 0 {
+			m.closing = true
+			return m, tickCmd()
+		}
+
+		m.percent = 1 - float64(m.remainingTime.Milliseconds())/float64(m.timerDuration.Milliseconds())
+
 		return m, tickCmd()
-	case progress.FrameMsg:
-		fmt.Println("update")
-		progressModel, cmd := m.progress.Update(msg)
-		m.progress = progressModel.(progress.Model)
-		return m, cmd
 
 	default:
 		return m, nil
