@@ -184,11 +184,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if m.remainingTime.Seconds() <= -4 {
 			m.closing = false
 			m.inSession = false
-			endSession := time.Now()
-			m.sessions = append(m.sessions, session{StartTime: m.startTime, EndTime: endSession, Type: m.sessionType})
-			err := saveSessions(m.sessions)
-			if err != nil {
-				m.err = err.Error()
+
+			if m.sessionType == workSession {
+				endSession := time.Now()
+				m.sessions = append(m.sessions, session{StartTime: m.startTime, EndTime: endSession})
+				err := saveSessions(m.sessions)
+				if err != nil {
+					m.err = err.Error()
+				}
 			}
 
 			return m, nil

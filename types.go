@@ -34,5 +34,4 @@ type keyMap struct {
 type session struct {
 	StartTime time.Time `json:"start_time"`
 	EndTime   time.Time `json:"end_time"`
-	Type      string    `json:"type"`
 }
