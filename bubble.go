@@ -122,9 +122,19 @@ func (m model) View() string {
 	if !m.inSession {
 		return showHelper()
 	}
+	if m.opening {
+		return fmt.Sprintf("Ready to start new %s session in %d seconds...", m.sessionType, int(m.remainingTime.Seconds()-m.timerDuration.Seconds()))
+	}
+
+	if m.closing {
+		if m.sessionType == workSession {
+			return fmt.Sprintf("You have completed one %s session. Keep it up 💪", m.sessionType)
+		}
+		return fmt.Sprintf("Regained your energy with short %s. Let's start %s session.", breakSession, workSession)
+	}
 	pad := strings.Repeat(" ", padding)
 
-	return fmt.Sprintf("\n%s Timer: %s left\n", m.sessionType, m.remainingTime) + pad + m.progress.ViewAs(m.percent) + "\n\n" + pad + helpStyle(" - Press 'x' to stop\n - Press 'q' to quit")
+	return fmt.Sprintf("\n%s Timer: %s left\n\n", m.sessionType, m.remainingTime) + pad + m.progress.ViewAs(m.percent) + "\n\n\n" + helpStyle(" - Press 'x' to stop\n - Press 'q' to quit")
 }
 
 func tickCmd() tea.Cmd {
