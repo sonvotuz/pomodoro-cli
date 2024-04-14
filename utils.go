@@ -63,19 +63,23 @@ func saveSessions(sessions []session) error {
 	return nil
 }
 
-func printSessions(sessions []session, differentDate bool, date time.Time) {
+func printSessions(sessions []session, differentDate bool, date time.Time) string {
+	printingResult := ""
+
 	if !differentDate {
 		today := time.Now()
 		todaySessions := getCorrectSession(sessions, today)
 
-		fmt.Println("Today's Completed Sessions:")
-		printHelper(todaySessions)
+		printingResult = "Today's Completed Sessions:\n"
+		printingResult += printHelper(todaySessions)
 	} else {
 		differentDateSessions := getCorrectSession(sessions, date)
 
-		fmt.Printf("Completed sessions on %v:\n", date.Format(time.DateOnly))
-		printHelper(differentDateSessions)
+		printingResult = fmt.Sprintf("Completed sessions on %v:\n", date.Format(time.DateOnly))
+		printingResult += printHelper(differentDateSessions)
 	}
+
+	return printingResult
 }
 
 func getCorrectSession(sessions []session, date time.Time) []session {
@@ -89,8 +93,13 @@ func getCorrectSession(sessions []session, date time.Time) []session {
 	return resultSessions
 }
 
-func printHelper(sessions []session) {
-	for _, s := range sessions {
-		fmt.Printf("Pomodoro session: duration of %f minutes from %v to %v\n", s.Duration.Minutes(), s.StartTime.Format("15:04"), s.EndTime.Format("15:04"))
+func printHelper(sessions []session) string {
+	resultPrinting := ""
+	if len(sessions) == 0 {
+		return "\nYou haven't completed any session 😕\n"
 	}
+	for _, s := range sessions {
+		resultPrinting += fmt.Sprintf("Pomodoro session: duration of %f minutes from %v to %v\n", s.Duration.Minutes(), s.StartTime.Format("15:04"), s.EndTime.Format("15:04"))
+	}
+	return resultPrinting
 }
