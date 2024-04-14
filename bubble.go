@@ -80,6 +80,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 
+		if m.showSession && key.Matches(msg, m.keys.Stop) {
+			m.showSession = false
+			m.textarea.Reset()
+			return m, nil
+		}
+
 		m.err = ""
 		switch msg.Type {
 		case tea.KeyCtrlC, tea.KeyEsc:
@@ -211,6 +217,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
+	if m.showSession {
+		return fmt.Sprintf("\n%v\n%v",
+			printSessions(m.sessions, m.printDifferentDate, m.datePrint),
+			helpStyle(" - Press 'x' to stop\n"))
+	}
+
 	if !m.inSession {
 		return fmt.Sprintf(
 			"\n%s\n%s\n\n%s\n\n",
