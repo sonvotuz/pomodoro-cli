@@ -112,8 +112,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if !m.inSession {
 					m.startTime = time.Now()
 					m.sessionType = workSession
-					// m.timerDuration = 5 * time.Minute
-					m.timerDuration = time.Duration(numOfMinutes) * time.Second
+					m.timerDuration = time.Duration(numOfMinutes) * time.Minute
 					m.remainingTime = m.timerDuration + 3*time.Second
 					m.percent = 0
 					m.inSession = true
@@ -146,8 +145,29 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				} else {
 					return m, nil
 				}
-			case command == "l":
-				// TODO: printSessions func
+			case strings.HasPrefix(command, "l"):
+				if command == "l" {
+					m.printDifferentDate = false
+					m.showSession = true
+				} else {
+					spacing := command[1:]
+					if !strings.HasPrefix(spacing, " ") {
+						m.err = "Invalid command"
+						return m, nil
+					}
+
+					dateStr := strings.TrimSpace(command[2:])
+
+					date, err := time.Parse(time.DateOnly, dateStr)
+					if err != nil {
+						m.err = "Invalid date format"
+						return m, nil
+					}
+					m.printDifferentDate = true
+					m.datePrint = date
+					m.showSession = true
+				}
+
 				return m, nil
 
 			default:
