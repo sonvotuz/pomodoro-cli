@@ -21,6 +21,7 @@ type model struct {
 	closing       bool
 
 	textarea textarea.Model
+	err      string
 }
 
 type keyMap struct {
