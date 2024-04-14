@@ -32,6 +32,22 @@ func checkValidMinute(m *model, command string) (int, bool) {
 	}
 	return numOfMinutes, true
 }
+
+func loadSessions() []session {
+	data, err := os.ReadFile("db.json")
+	if err != nil {
+		return []session{}
+	}
+
+	sessions := []session{}
+	err = json.Unmarshal(data, &sessions)
+	if err != nil {
+		return []session{}
+	}
+
+	return sessions
+}
+
 func saveSessions(sessions []session) error {
 	data, err := json.MarshalIndent(sessions, "", "  ")
 	if err != nil {
