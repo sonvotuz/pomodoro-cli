@@ -60,47 +60,82 @@ func (m model) Init() tea.Cmd {
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	m.textarea, _ = m.textarea.Update(msg)
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		switch {
-		case key.Matches(msg, m.keys.Quit):
-			return m, tea.Quit
-		case key.Matches(msg, m.keys.Start):
-			if !m.inSession {
-				// TODO: s %m command
-				m.startTime = time.Now()
-				m.sessionType = workSession
-				// m.timerDuration = 25 * time.Minute
-				m.timerDuration = 10 * time.Second
-				m.remainingTime = m.timerDuration + 3*time.Second
-				m.percent = 0
-				m.inSession = true
-				m.opening = true
-				m.closing = false
+		if m.inSession {
+			if m.opening || m.closing {
+				return m, nil
 			}
-			return m, tickCmd()
+			switch {
+			case key.Matches(msg, m.keys.Stop):
 
-		case key.Matches(msg, m.keys.Break):
-			if !m.inSession {
-				m.startTime = time.Now()
-				m.sessionType = breakSession
-				// m.timerDuration = 5 * time.Minute
-				m.timerDuration = 10 * time.Second
-				m.remainingTime = m.timerDuration + 3*time.Second
-				m.percent = 0
-				m.inSession = true
-				m.opening = true
-				m.closing = false
+				if m.inSession {
+					m.inSession = false
+					m.textarea.Reset()
+				}
+				return m, nil
+			case key.Matches(msg, m.keys.Quit):
+				return m, tea.Quit
 			}
-			return m, tickCmd()
-		case key.Matches(msg, m.keys.List):
-			// TODO: printSessions func
+		}
+
+		switch msg.Type {
+		case tea.KeyCtrlC, tea.KeyEsc:
+			return m, tea.Quit
+		case tea.KeyType('q'):
 			return m, nil
-		case key.Matches(msg, m.keys.Stop):
-			if m.inSession {
-				m.inSession = false
+		case tea.KeyEnter:
+			command := m.textarea.Value()
+			m.textarea.Reset()
+
+			switch {
+			case command == "q":
+				return m, tea.Quit
+			case command == "s":
+				if !m.inSession {
+					m.startTime = time.Now()
+					m.sessionType = workSession
+					// m.timerDuration = 25 * time.Minute
+					m.timerDuration = 10 * time.Second
+					m.remainingTime = m.timerDuration + 3*time.Second
+					m.percent = 0
+					m.inSession = true
+					m.opening = true
+					m.closing = false
+					return m, tickCmd()
+				} else {
+					return m, nil
+				}
+			case strings.HasPrefix(command, "s"):
+				fmt.Println("command", command)
+
+				return m, nil
+			case command == "b":
+				if !m.inSession {
+					m.startTime = time.Now()
+					m.sessionType = breakSession
+					// m.timerDuration = 5 * time.Minute
+					m.timerDuration = 10 * time.Second
+					m.remainingTime = m.timerDuration + 3*time.Second
+					m.percent = 0
+					m.inSession = true
+					m.opening = true
+					m.closing = false
+					return m, tickCmd()
+				} else {
+					return m, nil
+				}
+			case command == "l":
+				// TODO: printSessions func
+				return m, nil
+
+			default:
+				if !m.inSession {
+					showHelper()
+				}
+				return m, nil
 			}
-			return m, nil
 		default:
 			if !m.inSession {
 				showHelper()
