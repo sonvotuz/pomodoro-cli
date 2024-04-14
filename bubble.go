@@ -142,7 +142,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m model) View() string {
 	if !m.inSession {
-		return showHelper()
+		return fmt.Sprintf(
+			"\n%s\n%s\n\n",
+			showHelper(),
+			m.textarea.View(),
+		)
 	}
 	if m.opening {
 		return fmt.Sprintf("Ready to start new %s session in %d seconds...", m.sessionType, int(m.remainingTime.Seconds()-m.timerDuration.Seconds()))
