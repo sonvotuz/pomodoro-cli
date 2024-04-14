@@ -2,6 +2,9 @@
 
 Pomodoro CLI is a simple yet powerful command-line tool designed to help you manage your time efficiently using the Pomodoro Technique. Built in Go and leveraging the Bubble Tea library, it provides a clean, interactive interface to conduct focused work and break sessions.
 
+## Demo
+![Demo](https://github.com/vnsonvo/pomodoro-cli/assets/78811434/5c755feb-34ec-4357-84c7-22b639d1a58b)
+
 ## Features
 - Customizable Work and Break Lengths: Specify the duration of each session directly through the command line.
 - Interactive Text-Based UI: Utilize an interactive textarea for command input and see live session updates.
