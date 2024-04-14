@@ -5,6 +5,8 @@ import (
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/progress"
+	"github.com/charmbracelet/bubbles/textarea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 type model struct {
@@ -18,6 +20,9 @@ type model struct {
 	keys          keyMap
 	opening       bool
 	closing       bool
+
+	textarea    textarea.Model
+	senderStyle lipgloss.Style
 }
 
 type keyMap struct {
