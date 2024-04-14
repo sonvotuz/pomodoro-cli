@@ -12,8 +12,10 @@ import (
 )
 
 const (
-	padding  = 2
-	maxWidth = 80
+	padding      = 2
+	maxWidth     = 80
+	workSession  = "Work"
+	breakSession = "Break"
 )
 
 type tickMsg time.Time
@@ -57,20 +59,28 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if !m.inSession {
 				// TODO: s %m command
 				m.startTime = time.Now()
-				m.sessionType = "Work"
-				m.timerDuration = 1 * time.Minute
-				m.remainingTime = m.timerDuration
+				m.sessionType = workSession
+				// m.timerDuration = 25 * time.Minute
+				m.timerDuration = 10 * time.Second
+				m.remainingTime = m.timerDuration + 3*time.Second
+				m.percent = 0
 				m.inSession = true
+				m.opening = true
+				m.closing = false
 			}
 			return m, tickCmd()
 
 		case key.Matches(msg, m.keys.Break):
 			if !m.inSession {
 				m.startTime = time.Now()
-				m.sessionType = "Break"
-				m.timerDuration = 5 * time.Minute
-				m.remainingTime = m.timerDuration
+				m.sessionType = breakSession
+				// m.timerDuration = 5 * time.Minute
+				m.timerDuration = 10 * time.Second
+				m.remainingTime = m.timerDuration + 3*time.Second
+				m.percent = 0
 				m.inSession = true
+				m.opening = true
+				m.closing = false
 			}
 			return m, tickCmd()
 		case key.Matches(msg, m.keys.List):
@@ -81,10 +91,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.inSession = false
 			}
 			return m, nil
-			// case key.Matches(msg, m.keymap.reset):
-			// 	m.timer.Timeout = timeout
-			// case key.Matches(msg, m.keymap.start, m.keymap.stop):
-			// 	return m, m.timer.Toggle()
 		default:
 			if !m.inSession {
 				showHelper()
