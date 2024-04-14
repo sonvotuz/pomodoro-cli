@@ -109,15 +109,53 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return m, nil
 				}
 			case strings.HasPrefix(command, "s"):
-				fmt.Println("command", command)
+				numOfMinutes, ok := checkValidMinute(&m, command)
+				if !ok {
+					return m, nil
+				}
 
-				return m, nil
+				if !m.inSession {
+					m.startTime = time.Now()
+					m.sessionType = workSession
+					// m.timerDuration = 5 * time.Minute
+					m.timerDuration = time.Duration(numOfMinutes) * time.Second
+					m.remainingTime = m.timerDuration + 3*time.Second
+					m.percent = 0
+					m.inSession = true
+					m.opening = true
+					m.closing = false
+					return m, tickCmd()
+				} else {
+					return m, nil
+				}
 			case command == "b":
+
 				if !m.inSession {
 					m.startTime = time.Now()
 					m.sessionType = breakSession
 					// m.timerDuration = 5 * time.Minute
-					m.timerDuration = 10 * time.Second
+					m.timerDuration = 5 * time.Second
+					m.remainingTime = m.timerDuration + 3*time.Second
+					m.percent = 0
+					m.inSession = true
+					m.opening = true
+					m.closing = false
+					return m, tickCmd()
+				} else {
+					return m, nil
+				}
+
+			case strings.HasPrefix(command, "b"):
+				numOfMinutes, ok := checkValidMinute(&m, command)
+				if !ok {
+					return m, nil
+				}
+
+				if !m.inSession {
+					m.startTime = time.Now()
+					m.sessionType = breakSession
+					// m.timerDuration = 5 * time.Minute
+					m.timerDuration = time.Duration(numOfMinutes) * time.Second
 					m.remainingTime = m.timerDuration + 3*time.Second
 					m.percent = 0
 					m.inSession = true
@@ -135,6 +173,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if !m.inSession {
 					showHelper()
 				}
+				m.err = "Invalid command"
 				return m, nil
 			}
 		default:
